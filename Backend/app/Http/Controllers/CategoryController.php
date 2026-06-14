@@ -25,8 +25,7 @@ class CategoryController extends Controller
     public function index()
     {
         // ambil kategori pribadi
-        $userId = auth('sanctum')->user()->id;
-        $items = $this->model->query()->where("user_id", $userId)->get();
+        $items = $this->model->query()->where("user_id", $this->user->id)->get();
         return $this->success($items, "Data kategori berhasil diambil");
     }
 

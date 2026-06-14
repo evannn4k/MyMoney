@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Transaction\CreateTransctionRequest;
 use App\Http\Requests\Transaction\UpdateTransctionRequest;
 use App\Models\Category;
+use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Services\ImageService;
 use App\Traits\JsonApiResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
@@ -20,7 +22,7 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function __construct(protected Category $model, protected ImageService $imageService)
+    public function __construct(protected Transaction $model, protected ImageService $imageService)
     {
         $this->user = auth('sanctum')->user();
     }
@@ -39,28 +41,47 @@ class TransactionController extends Controller
     {
         $credentials = $request->validated();
         try {
-            $credentials["user_id"] = $this->user->id;
+            $wallet = Wallet::query()->where("id", $credentials["wallet_id"])->where("user_id", $this->user->id)->first();
 
-            // tanggal
-            if (!isset($credentials["date"]) && empty($credentials["date"])) {
-                $credentials["date"] = now();
+            if (!$wallet) {
+                return $this->error("", "Wallet tidak ditemukan", 404);
             }
 
-            // gambar bukti
-            if (isset($credentials["receipt_image"]) && !empty($credentials["receipt_image"])) {
-                $filename = $this->imageService->save($credentials["receipt_image"], $this->path);
-                $credentials["receipt_image"] = $filename;
+            $category = Category::query()->where("id", $credentials["category_id"])->where("user_id", $this->user->id)->first();
+
+            if (!$category) {
+                return $this->error("", "Kategori tidak ditemukan", 404);
             }
 
-            $category = Category::findOrFail($credentials["category_id"]);
-            $wallet = Wallet::findOrFail($credentials["wallet_id"]);
+            $data = DB::transaction(function () use ($credentials, $wallet) {
 
+                $credentials["user_id"] = $this->user->id;
 
-            $item = $this->model->create($credentials);
-            return $this->success($item, "Berhasilkan menambahkan transaksi baru!", 201);
+                // tanggal
+                if (!isset($credentials["date"]) && empty($credentials["date"])) {
+                    $credentials["date"] = now()->format("Y-m-d");
+                }
+
+                // gambar bukti
+                if (isset($credentials["receipt_image"]) && !empty($credentials["receipt_image"])) {
+                    $filename = $this->imageService->save($credentials["receipt_image"], $this->path);
+                    $credentials["receipt_image"] = $filename;
+                }
+
+                $category = Category::findOrFail($credentials["category_id"]);
+
+                $newBalance = $category->type === "income" ? $wallet->balance + $credentials["amount"] : $wallet->balance - $credentials["amount"];
+
+                $wallet->update(["balance" => $newBalance]);
+
+                $item = $this->model->create($credentials);
+                return $item;
+            });
+
+            return $this->success($data, "Berhasil menambahkan transaksi baru!", 201);
         } catch (\Exception $e) {
             Log::error("error : " . $e->getMessage());
-            return $this->error($e->getMessage(), "Request gagal");
+            return $this->error("Error", "Request gagal");
         }
     }
 
@@ -85,6 +106,19 @@ class TransactionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $transaction = Transaction::query()->where("id", $id)->where("user_id", $this->user->id)->get();
+            
+            if(!$transaction) {
+                return $this->error("error", "Transaksi tidak ditemukan!", 404);
+            }
+            
+            $transaction->delete();
+
+            return $this->success($transaction, "Berhasil menghapus transaksi!", 201);
+        } catch (\Exception $e) {
+            Log::error("error : " . $e->getMessage());
+            return $this->error("Error", "Request gagal");
+        }
     }
 }

@@ -26,7 +26,7 @@ class CreateTransctionRequest extends FormRequest
             "wallet_id" => "required|integer|exists:wallets,id",
             "category_id" => "required|integer|exists:categories,id",
             "notes" => "nullable|string",
-            "date" => "nulalble|date",
+            "date" => "nullable|date",
             "amount" => "required|numeric|min:0",
             "receipt_image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048",
         ];

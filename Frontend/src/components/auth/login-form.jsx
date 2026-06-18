@@ -19,15 +19,15 @@ import PrimaryLogo from "@/assets/images/logo/primary_logo.png";
 import SecondaryLogo from "@/assets/images/logo/secondary_logo.png";
 import Bg from "@/assets/images/bg.jpg";
 import { Spinner } from "@/components/ui/spinner";
-import axios from "axios";
+import api from "@/services/api";
 import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 export function LoginForm({ className, ...props }) {
-    const api = import.meta.env.VITE_BACKEND_API_URL;
     const [typePassword, setTypePassword] = useState("password");
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const redirect = useNavigate();
 
     const initialData = {
         email: "",
@@ -40,16 +40,34 @@ export function LoginForm({ className, ...props }) {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${api}/verify`, data);
-            if (!response.ok) {
-                throw response;
-            }
-            console.log(response);
+            const response = await api.post(`/api/verify`, data);
+
+            const { name, email, token } = response.data.data;
+            localStorage.setItem("name", name);
+            localStorage.setItem("email", email);
+            localStorage.setItem("token", token);
+
+            redirect("/dashboard");
         } catch (e) {
-            console.log(e);
+            Swal.fire({
+                title: "Login Gagal!",
+                text: "Email atau password salah, silahkan coba lagi!",
+                icon: "error",
+            });
+            console.log(e.response.data.errors);
+            setErrors(e.response.data.errors);
         } finally {
             setIsLoading(false);
         }
+    }
+
+    function handleChange(e) {
+        setData((item) => {
+            return {
+                ...item,
+                [e.target.id]: e.target.value,
+            };
+        });
     }
 
     return (
@@ -76,6 +94,8 @@ export function LoginForm({ className, ...props }) {
                             <Field>
                                 <FieldLabel htmlFor="email">Email</FieldLabel>
                                 <Input
+                                    value={data.email}
+                                    onChange={handleChange}
                                     id="email"
                                     type="email"
                                     placeholder="emailmu@contoh.com"
@@ -87,7 +107,9 @@ export function LoginForm({ className, ...props }) {
                                 </FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
-                                        id="inline-end-input"
+                                        value={data.password}
+                                        onChange={handleChange}
+                                        id="password"
                                         type={typePassword}
                                         placeholder="Masukan password"
                                     />

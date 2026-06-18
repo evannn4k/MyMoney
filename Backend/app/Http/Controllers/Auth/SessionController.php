@@ -24,14 +24,15 @@ class SessionController extends Controller
                 if (Auth::user()->status === "active") {
                     $user = Auth::user();
                     $token = $user->createToken('token')->plainTextToken;
-                    return $this->success(["token" => $token], "Berhasil login", 200);
+
+                    return $this->success(["name" => $user->name, "email" => $user->email, "token" => $token], "Berhasil login", 200);
                 }
                 return $this->error("login failed", "Email belum di verifikasi", 401);
             }
             return $this->error("login failed", "Email atau password salah!", 401);
         } catch (\Exception $e) {
             Log::error("error : " . $e->getMessage());
-            return $this->error($e->getMessage(), "Berhasil login");
+            return $this->error($e->getMessage(), "Login gagal");
         }
     }
 

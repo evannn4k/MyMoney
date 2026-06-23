@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Transaction;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateTransctionRequest extends FormRequest

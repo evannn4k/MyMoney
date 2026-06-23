@@ -98,7 +98,7 @@ export function AppSidebar() {
                             <SidebarMenuButton asChild>
                                 <a href="/note">
                                     <FontAwesomeIcon icon={faReceipt} />
-                                    <span>Catat</span>
+                                    <span>Transaksi</span>
                                 </a>
                             </SidebarMenuButton>
                             <SidebarMenuAction>
@@ -116,7 +116,7 @@ export function AppSidebar() {
                                 <span className="sr-only">Dompet</span>
                             </SidebarMenuAction>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
+                        {/* <SidebarMenuItem>
                             <SidebarMenuButton asChild>
                                 <a href="/history">
                                     <FontAwesomeIcon icon={faClockRotateLeft} />
@@ -126,7 +126,7 @@ export function AppSidebar() {
                             <SidebarMenuAction>
                                 <span className="sr-only">Riwayat</span>
                             </SidebarMenuAction>
-                        </SidebarMenuItem>
+                        </SidebarMenuItem> */}
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>

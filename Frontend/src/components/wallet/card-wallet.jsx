@@ -26,12 +26,13 @@ export default function CardWallet({
                     <div className="" key={wallet.id}>
                         <Card size="lg" className="mx-auto w-full max-w-sm">
                             <CardHeader>
-                                <CardTitle className="text-lg">
+                                <CardTitle className="text-lg text-brand-600">
                                     {wallet.name}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-3xl  font-bold">
+                                <p className="text-brand-800 font-bold">Saldo :</p>
+                                <p className="text-3xl text-brand-800 font-bold">
                                     {new Intl.NumberFormat("id-ID", {
                                         style: "currency",
                                         currency: "IDR",

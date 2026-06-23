@@ -55,7 +55,7 @@ export default function Wallet() {
 
     const initialWallet = {
         name: "",
-        saldo: 0,
+        saldo: null,
     };
 
     const [wallet, setWallet] = useState(initialWallet);

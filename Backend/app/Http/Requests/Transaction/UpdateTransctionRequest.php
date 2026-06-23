@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Transaction;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTransctionRequest extends FormRequest
@@ -12,7 +11,7 @@ class UpdateTransctionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +22,10 @@ class UpdateTransctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "notes" => "nullable|string",
+            "date" => "nullable|date",
+            "amount" => "required|numeric|min:0",
+            "receipt_image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048",
         ];
     }
 }

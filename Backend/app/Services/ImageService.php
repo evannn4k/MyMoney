@@ -25,7 +25,7 @@ class ImageService
     {
         Storage::delete($this->dir . $path . $oldImage);
 
-        $extension = $image->extension();
+        $extension = $image->getClientOriginalExtension();
         $filename = time() . Str::random(6) . "." . $extension;
 
         $image->storeAs($this->dir . $path, $filename);

@@ -1,15 +1,15 @@
-import TableNote from "@/components/note/table-note";
+import TableCategory from "@/components/category/table-category";
+import Search from "@/components/category/search";
+import FormDialog from "@/components/category/form-category";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
-import Search from "@/components/note/search";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import FormDialog from "@/components/note/form-dialog";
 
-export default function Note() {
+export default function Category() {
     const [loading, setLoading] = useState(false);
-    const [transactions, setTransactions] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [dialog, setDialog] = useState({
         open: false,
@@ -17,11 +17,11 @@ export default function Note() {
         data: null,
     });
 
-    const fetchNote = async () => {
+    const fetchCategory = async () => {
         setLoading(true);
         try {
-            const response = await api.get("/api/transaction/");
-            setTransactions(response.data.data);
+            const response = await api.get("/api/category/");
+            setCategories(response.data.data);
         } catch (e) {
             console.log(e);
         } finally {
@@ -30,18 +30,17 @@ export default function Note() {
     };
 
     useEffect(() => {
-        fetchNote();
+        fetchCategory();
     }, []);
 
-    const display = transactions.filter((item) => {
-        return item.notes.toLowerCase().includes(searchQuery.toLowerCase());
+    const display = categories.filter((item) => {
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
     });
-    // const display = transactions;
 
     return (
         <>
             <FormDialog
-                fetchNote={fetchNote}
+                fetchCategory={fetchCategory}
                 dialog={dialog}
                 setIsOpen={(e) => {
                     setDialog({ open: e, data: null });
@@ -56,12 +55,13 @@ export default function Note() {
                             setDialog({ open: true, edit: false, data: null })
                         }>
                         <FontAwesomeIcon icon={faPlus} />
-                        Tambah Catatan
+                        Tambah Category
                     </Button>
                 </div>
-                <TableNote
-                    fetchNote={fetchNote}
-                    transactions={display}
+
+                <TableCategory
+                    fetchCategory={fetchCategory}
+                    categories={display}
                     setDialog={setDialog}
                     loading={loading}
                 />

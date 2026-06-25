@@ -127,7 +127,7 @@ class TransactionController extends Controller
                 return $this->error("error", "Transaksi tidak ditemukan!", 404);
             }
 
-            if ($credentials['receipt_image']) {
+            if ($request->hasFile('receipt_image')) {
                 $filename = $this->imageService->update($item->receipt_image, $credentials['receipt_image'], $this->path);
                 $credentials['receipt_image'] = $filename;
             }
@@ -160,6 +160,33 @@ class TransactionController extends Controller
             $transaction->delete();
 
             return $this->success($transaction, "Berhasil menghapus transaksi!", 201);
+        } catch (\Exception $e) {
+            Log::error("error : " . $e->getMessage());
+            return $this->error($e->getMessage(), "Request gagal");
+        }
+    }
+
+    public function getFormData()
+    {
+        try {
+            $categories = Category::query()->where("user_id", $this->user->id)->get();
+
+            if (!$categories) {
+                return $this->error("error", "Kategori tidak ditemukan!", 404);
+            }
+
+            $wallets = Wallet::query()->where("user_id", $this->user->id)->get();
+
+            if (!$wallets) {
+                return $this->error("error", "Dompet tidak ditemukan!", 404);
+            }
+
+            $formData = [
+                "categories" => $categories,
+                "wallets" => $wallets
+            ];
+
+            return $this->success($formData, "Berhasil mendapat form data!", 201);
         } catch (\Exception $e) {
             Log::error("error : " . $e->getMessage());
             return $this->error($e->getMessage(), "Request gagal");

@@ -6,7 +6,6 @@ import {
     FieldDescription,
     FieldGroup,
     FieldLabel,
-    FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { EyeOffIcon } from "lucide-react";
@@ -23,9 +22,8 @@ import { Spinner } from "@/components/ui/spinner";
 import api from "@/services/api";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import { toast } from "sonner";
 
-export function LoginForm({ className, ...props }) {
+export default function RegisterForm({ className, ...props }) {
     const [typePassword, setTypePassword] = useState("password");
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -51,16 +49,12 @@ export function LoginForm({ className, ...props }) {
 
             redirect("/dashboard");
         } catch (e) {
-            // Swal.fire({
-            //     title: "Login Gagal!",
-            //     text: "Email atau password salah, silahkan coba lagi!",
-            //     icon: "error",
-            // });
-
-            toast.error("Gagal, silahkan coba lagi!");
-
+            Swal.fire({
+                title: "Login Gagal!",
+                text: "Email atau password salah, silahkan coba lagi!",
+                icon: "error",
+            });
             console.log(e.response.data.errors);
-
             setErrors(e.response.data.errors);
         } finally {
             setIsLoading(false);
@@ -97,27 +91,22 @@ export function LoginForm({ className, ...props }) {
                                     Silahkan masuk dengan menggunakan akun anda
                                 </p>
                             </div>
-                            <Field data-invalid={Boolean(errors.email)}>
+                            <Field>
                                 <FieldLabel htmlFor="email">Email</FieldLabel>
                                 <Input
-                                    aria-invalid={Boolean(errors.email)}
                                     value={data.email}
                                     onChange={handleChange}
                                     id="email"
                                     type="email"
                                     placeholder="emailmu@contoh.com"
                                 />
-                                {errors.email && (
-                                    <FieldError>{errors.email[0]}</FieldError>
-                                )}
                             </Field>
-                            <Field data-invalid={Boolean(errors.password)}>
+                            <Field>
                                 <FieldLabel htmlFor="password">
                                     Password
                                 </FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
-                                        aria-invalid={Boolean(errors.password)}
                                         value={data.password}
                                         onChange={handleChange}
                                         id="password"
@@ -137,11 +126,6 @@ export function LoginForm({ className, ...props }) {
                                         <EyeOffIcon />
                                     </InputGroupAddon>
                                 </InputGroup>
-                                {errors.password && (
-                                    <FieldError>
-                                        {errors.password[0]}
-                                    </FieldError>
-                                )}
                             </Field>
                             <Field>
                                 <Button

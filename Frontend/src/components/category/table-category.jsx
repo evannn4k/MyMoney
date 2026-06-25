@@ -36,22 +36,22 @@ import { useState } from "react";
 import api from "@/services/api";
 import { toast } from "sonner";
 
-export default function TableNote({
-    transactions,
+export default function TableCategory({
+    categories,
     setDialog,
     loading,
-    fetchNote,
+    fetchCategory,
 }) {
     const [alert, setAlert] = useState({ open: false, id: null });
 
     const handleDelete = async () => {
         try {
-            const response = await api.delete("/api/transaction/" + alert.id);
+            const response = await api.delete("/api/category/" + alert.id);
 
             toast.success(response.data.message, {
                 position: "top-right",
             });
-            fetchNote();
+            fetchCategory();
         } catch (e) {
             console.log(e);
         } finally {
@@ -69,9 +69,9 @@ export default function TableNote({
                         <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
                             <FontAwesomeIcon icon={faTrash} />
                         </AlertDialogMedia>
-                        <AlertDialogTitle>Hapus Transaksi?</AlertDialogTitle>
+                        <AlertDialogTitle>Hapus Kategori?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Ini akan menghapus data transaksi secara permanen
+                            Ini akan menghapus data kategori secara permanen
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -91,10 +91,7 @@ export default function TableNote({
                     <TableHeader className="bg-gray-100">
                         <TableRow>
                             <TableHead className="text-center">No</TableHead>
-                            <TableHead>Catatan</TableHead>
-                            <TableHead>Total</TableHead>
-                            <TableHead>Dompet</TableHead>
-                            <TableHead>Kategori</TableHead>
+                            <TableHead>Nama Kategori</TableHead>
                             <TableHead>Tipe</TableHead>
                             <TableHead className="text-right">Aksi</TableHead>
                         </TableRow>
@@ -111,26 +108,17 @@ export default function TableNote({
                                 </TableRow>
                             </>
                         ) : (
-                            transactions.map((transaction, i) => {
+                            categories.map((category, i) => {
                                 return (
-                                    <TableRow key={transaction.id}>
+                                    <TableRow key={category.id}>
                                         <TableCell className="font-medium text-center">
                                             {i + 1}.
                                         </TableCell>
-                                        <TableCell className="font-semibold">
-                                            {FormatRupiah(transaction.amount)}
+                                        <TableCell>
+                                            {category.name}
                                         </TableCell>
                                         <TableCell>
-                                            {transaction.notes}
-                                        </TableCell>
-                                        <TableCell>
-                                            {transaction.wallet}
-                                        </TableCell>
-                                        <TableCell>
-                                            {transaction.category}
-                                        </TableCell>
-                                        <TableCell>
-                                            {transaction.category_type ==
+                                            {category.type ==
                                             "income" ? (
                                                 <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
                                                     Pendapatan
@@ -160,7 +148,7 @@ export default function TableNote({
                                                             setDialog({
                                                                 open: true,
                                                                 edit: true,
-                                                                data: transaction,
+                                                                data: category,
                                                             })
                                                         }>
                                                         Edit
@@ -174,7 +162,7 @@ export default function TableNote({
                                                         onClick={() => {
                                                             setAlert({
                                                                 open: true,
-                                                                id: transaction.id,
+                                                                id: category.id,
                                                             });
                                                         }}>
                                                         Hapus

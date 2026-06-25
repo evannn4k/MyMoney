@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router";
+// import { Toaster } from "sonner";
 
 export default function MainLayout() {
     const routeTitles = {
@@ -22,6 +23,7 @@ export default function MainLayout() {
 
     return (
         <>
+            {/* <Toaster position="top-right" closeButton richColors /> */}
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
@@ -32,7 +34,9 @@ export default function MainLayout() {
                                 orientation="vertical"
                                 className="mr-2 data-[orientation=vertical]:h-4"
                             />
-                            <h1 className="font-medium font-base text-brand-700">{title}</h1>
+                            <h1 className="font-medium font-base text-brand-700">
+                                {title}
+                            </h1>
                         </div>
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

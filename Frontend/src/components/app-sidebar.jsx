@@ -3,6 +3,7 @@ import {
     faClockRotateLeft,
     faWallet,
     faReceipt,
+    faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -114,6 +115,17 @@ export function AppSidebar() {
                             </SidebarMenuButton>
                             <SidebarMenuAction>
                                 <span className="sr-only">Dompet</span>
+                            </SidebarMenuAction>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton asChild>
+                                <a href="/category">
+                                    <FontAwesomeIcon icon={faLayerGroup} />
+                                    <span>Kategori</span>
+                                </a>
+                            </SidebarMenuButton>
+                            <SidebarMenuAction>
+                                <span className="sr-only">Kategori</span>
                             </SidebarMenuAction>
                         </SidebarMenuItem>
                         {/* <SidebarMenuItem>

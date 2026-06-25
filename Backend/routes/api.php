@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post("/logout", [SessionController::class, "logout"]);
 
+    Route::get("/get-form-data", [TransactionController::class, "getFormData"]);
     Route::get("/dashboard", [DashboardController::class, "dashboard"]);
     Route::apiResource("/wallet", WalletController::class);
     Route::apiResource("/category", CategoryController::class);

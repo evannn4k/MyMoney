@@ -10,6 +10,7 @@ import { ProtectedRoute, GuestRoute } from "./route/middleware";
 import NotFount from "./pages/main/not-fount";
 import Category from "./pages/main/category";
 import { Toaster } from "sonner";
+import VerifyAccount from "./pages/auth/verify-account";
 
 export default function App() {
     return (
@@ -20,6 +21,7 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/verify-account/:url" element={<VerifyAccount />} />
                 </Route>
 
                 <Route element={<ProtectedRoute />}>

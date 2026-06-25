@@ -91,8 +91,9 @@ export default function TableNote({
                     <TableHeader className="bg-gray-100">
                         <TableRow>
                             <TableHead className="text-center">No</TableHead>
-                            <TableHead>Catatan</TableHead>
                             <TableHead>Total</TableHead>
+                            <TableHead>Catatan</TableHead>
+                            <TableHead>Tanggal</TableHead>
                             <TableHead>Dompet</TableHead>
                             <TableHead>Kategori</TableHead>
                             <TableHead>Tipe</TableHead>
@@ -122,6 +123,9 @@ export default function TableNote({
                                         </TableCell>
                                         <TableCell>
                                             {transaction.notes}
+                                        </TableCell>
+                                        <TableCell>
+                                            {transaction.date}
                                         </TableCell>
                                         <TableCell>
                                             {transaction.wallet}

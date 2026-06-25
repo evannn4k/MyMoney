@@ -31,7 +31,7 @@ class TransactionController extends Controller
     public function index()
     {
         // ambil transaksi pribadi
-        $items = $this->model->query()->where("user_id", $this->user->id)->with(['category', 'wallet'])->get();
+        $items = $this->model->query()->where("user_id", $this->user->id)->with(['category', 'wallet'])->orderByDesc('date')->get();
 
         $transactions = TransactionResource::collection($items)->resolve();
         return $this->success($transactions, "Data transaksi berhasil diambil");
@@ -53,14 +53,14 @@ class TransactionController extends Controller
                 return $this->error("", "Wallet tidak ditemukan", 404);
             }
 
+            if (!$category) {
+                return $this->error("", "Kategori tidak ditemukan", 404);
+            }
+
             if ($category->type === "expense") {
                 if ($wallet->balance < $credentials['amount']) {
                     return $this->error("", "Saldo tidak cukup", 404);
                 }
-            }
-
-            if (!$category) {
-                return $this->error("", "Kategori tidak ditemukan", 404);
             }
 
             $data = DB::transaction(function () use ($credentials, $wallet, $category) {

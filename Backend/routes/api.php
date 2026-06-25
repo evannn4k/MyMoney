@@ -21,4 +21,5 @@ Route::controller(SessionController::class)->group(function () {
     Route::post("/verify", "verify");
     Route::post("/register", "register");
     Route::post("/otp", "otp");
+    Route::get("/get-otp-data/{url}", "getOtpData");
 });

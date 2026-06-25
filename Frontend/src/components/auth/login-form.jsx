@@ -137,10 +137,12 @@ export function LoginForm({ className, ...props }) {
                                         <EyeOffIcon />
                                     </InputGroupAddon>
                                 </InputGroup>
-                                {errors.password && (
-                                    <FieldError>
-                                        {errors.password[0]}
-                                    </FieldError>
+                                {errors.email ? (
+                                    <FieldError>{errors.email[0]}</FieldError>
+                                ) : (
+                                    <FieldDescription>
+                                        Masukan email valid mu
+                                    </FieldDescription>
                                 )}
                             </Field>
                             <Field>

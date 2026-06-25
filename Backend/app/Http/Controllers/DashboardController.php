@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Traits\JsonApiResponse;
@@ -25,24 +26,24 @@ class DashboardController extends Controller
             $monthlyExpenses = Transaction::whereHas('category', function ($query) {
                 $query->where("type", "expense");
             })
-            ->where('date', ">=", Carbon::now()->subMonth())
-            ->where('user_id', "=", $this->user->id)
-            ->sum('amount');
+                ->where('date', ">=", Carbon::now()->subMonth())
+                ->where('user_id', "=", $this->user->id)
+                ->sum('amount');
 
             $monthlyIncome = Transaction::whereHas('category', function ($query) {
                 $query->where("type", "income");
             })
-            ->where('date', ">=", Carbon::now()->subMonth())
-            ->where('user_id', "=", $this->user->id)
-            ->sum('amount');
+                ->where('date', ">=", Carbon::now()->subMonth())
+                ->where('user_id', "=", $this->user->id)
+                ->sum('amount');
             $totalBalance = Wallet::query()->where("user_id", $this->user->id)->sum('balance');
-            $lastTenTransactions =  $this->model->query()->where("user_id", $this->user->id)->limit(10)->get();
+            $lastTenTransactions =  $this->model->query()->where("user_id", $this->user->id)->limit(10)->orderByDesc('date')->get();
 
             $data = [
                 "monthlyExpenses" => $monthlyExpenses,
                 "monthlyIncome" => $monthlyIncome,
                 "totalBalance" => $totalBalance,
-                "lastTenTransactions" => $lastTenTransactions,
+                "lastTenTransactions" => TransactionResource::collection($lastTenTransactions)->resolve(),
             ];
 
             return $this->success($data, "Berhasil mendapatkan data!");

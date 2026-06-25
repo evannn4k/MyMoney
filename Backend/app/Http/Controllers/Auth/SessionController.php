@@ -46,15 +46,26 @@ class SessionController extends Controller
     {
         $credentials = $request->validated();
         try {
+            $user = User::whereEmail($credentials["email"])->first();
+            if ($user && $user->status === "pending") {
+                $otp = OTP::query()->where("user_id", "=", $user->id)->first();
+                $url = $otp->url;
+                return $this->success(['url' => $url], "Registrasi berhasil! silahkan verifikasi email anda!", 200);
+            }
+
+            if ($user && $user->status === "active") {
+                return $this->error("", "Email sudah dipakai");
+            }
+
             $code = rand(100000, 999999);
-            $url = Str::password(36);
 
-            // dd($url);
-            // dd($code);
+            $p1 = Str::upper(Str::random(4));
+            $p2 = Str::upper(Str::random(4));
+            $p3 = Str::upper(Str::random(4));
+            $p4 = Str::upper(Str::random(4));
+            $p5 = Str::upper(Str::random(4));
 
-            // if (User::whereEmail($credentials["email"])->exists()) {
-            //     return $this->error("", "Email sudah dipakai");
-            // }
+            $url = "{$p1}-{$p2}-{$p3}-{$p4}-{$p5}";
 
             $user = User::create($credentials);
             // dd($user->id);
@@ -111,6 +122,24 @@ class SessionController extends Controller
             });
 
             return $this->success(['email' => $email], "Berhasil memverifikasi akun, silahkan login", 201);
+        } catch (\Exception $e) {
+            Log::error("error : " . $e->getMessage());
+            return $this->error($e->getMessage(), "Request gagal");
+        }
+    }
+
+    public function getOtpData($url)
+    {
+        try {
+            $otp = OTP::query()->where('url', '=', $url)->first();
+
+            if (!$otp) {
+                return $this->error("", "Url tidak valid", 404);
+            }
+
+            $user = User::query()->where('id', '=', $otp->user_id)->first();
+
+            return $this->success(["email" => $user->email], "Url valid", 200);
         } catch (\Exception $e) {
             Log::error("error : " . $e->getMessage());
             return $this->error($e->getMessage(), "Request gagal");

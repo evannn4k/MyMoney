@@ -10,6 +10,7 @@ use App\Mail\SendOTPNotification;
 use App\Models\OTP;
 use App\Models\User;
 use App\Traits\JsonApiResponse;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +34,9 @@ class SessionController extends Controller
 
                     return $this->success(["name" => $user->name, "email" => $user->email, "token" => $token], "Berhasil login", 200);
                 }
-                return $this->error("login failed", "Email belum di verifikasi", 401);
+                throw new Exception("Email belum diverifikasi");
             }
-            return $this->error("login failed", "Email atau password salah!", 401);
+            throw new Exception("Email atau password salah!");
         } catch (\Exception $e) {
             Log::error("error : " . $e->getMessage());
             return $this->error($e->getMessage(), "Login gagal");
@@ -54,7 +55,7 @@ class SessionController extends Controller
             }
 
             if ($user && $user->status === "active") {
-                return $this->error("", "Email sudah dipakai");
+                throw new Exception("Email sudah dipakai");
             }
 
             $code = rand(100000, 999999);
@@ -101,13 +102,11 @@ class SessionController extends Controller
             $otp = OTP::query()->where('url', '=', $credentials['url'])->first();
 
             if (!$otp) {
-                return $this->error('', "Code OTP tidak ditemukan", 404);
+                throw new Exception("Code OTP tidak ditemukan");
             }
 
-            // dd($otp->otp . " - " . $credentials['otp']);
-
             if ($otp->otp != $credentials['otp']) {
-                return $this->error('', "Code OTP salah", 404);
+                throw new Exception("Code OTP salah");
             }
 
             // return $this->error('', "error logika woiii", 404);
@@ -134,7 +133,7 @@ class SessionController extends Controller
             $otp = OTP::query()->where('url', '=', $url)->first();
 
             if (!$otp) {
-                return $this->error("", "Url tidak valid", 404);
+                throw new Exception("Url tidak valid");
             }
 
             $user = User::query()->where('id', '=', $otp->user_id)->first();

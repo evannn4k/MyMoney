@@ -53,7 +53,14 @@ export default function TableNote({
             });
             fetchNote();
         } catch (e) {
-            console.log(e);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         } finally {
             setAlert({ open: false, id: null });
         }

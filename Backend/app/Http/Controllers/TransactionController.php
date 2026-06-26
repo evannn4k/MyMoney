@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Services\ImageService;
 use App\Traits\JsonApiResponse;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -48,18 +49,17 @@ class TransactionController extends Controller
 
             $category = Category::query()->where("id", $credentials["category_id"])->where("user_id", $this->user->id)->first();
 
-
             if (!$wallet) {
-                return $this->error("", "Wallet tidak ditemukan", 404);
+                throw new Exception("Wallet tidak ditemukan!");
             }
 
             if (!$category) {
-                return $this->error("", "Kategori tidak ditemukan", 404);
+                throw new Exception("Kategori tidak ditemukan!");
             }
 
             if ($category->type === "expense") {
                 if ($wallet->balance < $credentials['amount']) {
-                    return $this->error("", "Saldo tidak cukup", 404);
+                    throw new Exception("Saldo tidak cukup!");
                 }
             }
 
@@ -124,7 +124,7 @@ class TransactionController extends Controller
             $item =  $this->model->query()->where("user_id", $this->user->id)->where('id', $id)->first();
 
             if (!$item) {
-                return $this->error("error", "Transaksi tidak ditemukan!", 404);
+                throw new Exception("Transaksi tidak ditemukan!");
             }
 
             if ($request->hasFile('receipt_image')) {
@@ -150,7 +150,7 @@ class TransactionController extends Controller
             $transaction = Transaction::query()->where("id", $id)->where("user_id", $this->user->id)->first();
 
             if (!$transaction) {
-                return $this->error("error", "Transaksi tidak ditemukan!", 404);
+                throw new Exception("Transaksi tidak ditemukan!");
             }
 
             if ($transaction->receipt_image) {
@@ -172,13 +172,13 @@ class TransactionController extends Controller
             $categories = Category::query()->where("user_id", $this->user->id)->get();
 
             if (!$categories) {
-                return $this->error("error", "Kategori tidak ditemukan!", 404);
+                throw new Exception("Kategori tidak ditemukan!");
             }
 
             $wallets = Wallet::query()->where("user_id", $this->user->id)->get();
 
             if (!$wallets) {
-                return $this->error("error", "Dompet tidak ditemukan!", 404);
+                throw new Exception("Dompet tidak ditemukan!");
             }
 
             $formData = [

@@ -52,16 +52,14 @@ export default function RegisterForm({ className, ...props }) {
 
             redirect("/verify-account/" + response.data.data.url);
         } catch (e) {
-            if (e.response.data.message === "Email sudah dipakai") {
-                toast.error("Email sudah dipakai!");
-                setErrors({
-                    email: ["Email sudah dipakai"],
-                });
-            } else {
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
                 toast.error("Gagal, silahkan coba lagi!");
-                console.log(e.response.data)
-                setErrors(e.response.data.errors);
+            } else {
+                toast.error(errorData.errors);
             }
+
+            setErrors(errorData.errors);
         } finally {
             setIsLoading(false);
         }

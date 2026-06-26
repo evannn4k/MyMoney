@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
-import { FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 
 export default function dashboard() {
@@ -36,7 +35,14 @@ export default function dashboard() {
 
             setData(response.data.data);
         } catch (e) {
-            console.log(e.response);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+            
+            setErrors(errorData.errors);
         } finally {
             setLoading(false);
         }
@@ -66,7 +72,7 @@ export default function dashboard() {
                     <Card className="@container/card">
                         <CardHeader>
                             <CardDescription>
-                                Pengeluaran Bulan ini
+                                Pengeluaran Bulan Ini
                             </CardDescription>
                             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                                 {FormatRupiah(data.monthlyExpenses)}
@@ -81,7 +87,7 @@ export default function dashboard() {
                     <Card className="@container/card">
                         <CardHeader>
                             <CardDescription>
-                                Pendapatan Bulanan
+                                Pendapatan Bulan Ini
                             </CardDescription>
                             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
                                 {FormatRupiah(data.monthlyIncome)}

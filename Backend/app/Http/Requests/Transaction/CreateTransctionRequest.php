@@ -22,8 +22,8 @@ class CreateTransctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "wallet_id" => "required|integer|exists:wallets,id",
-            "category_id" => "required|integer|exists:categories,id",
+            "wallet_id" => "required|integer",
+            "category_id" => "required|integer",
             "notes" => "nullable|string",
             "date" => "nullable|date",
             "amount" => "required|numeric|min:0",

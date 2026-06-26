@@ -77,7 +77,14 @@ export default function FormDialog({ dialog, setIsOpen, fetchNote }) {
             setFormData(response.data.data);
             // console.log(response.data);
         } catch (e) {
-            console.log(e.response.data);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         }
     };
 
@@ -141,18 +148,16 @@ export default function FormDialog({ dialog, setIsOpen, fetchNote }) {
             setData(initialData);
             fetchNote();
         } catch (e) {
-            setErrors(e.response.data.errors);
-            if (e.response.data.message == "Saldo tidak cukup") {
-                toast.error("Saldo tidak cukup!", {
-                    position: "top-right",
-                });
-                setErrors({ amount: ["Saldo tidak cukup"] });
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
             } else {
-                toast.error("Gagal, silahkan coba lagi!", {
-                    position: "top-right",
-                });
+                toast.error(errorData.errors);
             }
-            console.log(e.response.data);
+
+            console.log(errorData);
+            console.log(typeof errorData.errors);
+            setErrors(errorData.errors);
         } finally {
             setLoading(false);
         }

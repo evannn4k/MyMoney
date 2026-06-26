@@ -23,8 +23,7 @@ class UpdateTransctionRequest extends FormRequest
     {
         return [
             "notes" => "nullable|string",
-            "date" => "nullable|date",
-            // "amount" => "required|numeric|min:0",
+            "date" => "required|date",
             "receipt_image" => "nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048",
         ];
     }

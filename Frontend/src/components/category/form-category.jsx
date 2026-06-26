@@ -92,13 +92,14 @@ export default function FormDialog({ dialog, setIsOpen, fetchCategory }) {
             setData(initialData);
             fetchCategory();
         } catch (e) {
-            setErrors(e.response.data.errors);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
 
-            toast.error("Gagal, silahkan coba lagi!", {
-                position: "top-right",
-            });
-
-            console.log(e.response.data);
+            setErrors(errorData.errors);
         } finally {
             setLoading(false);
         }

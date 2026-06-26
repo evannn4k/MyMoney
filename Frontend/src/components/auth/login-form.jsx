@@ -51,17 +51,14 @@ export function LoginForm({ className, ...props }) {
 
             redirect("/dashboard");
         } catch (e) {
-            // Swal.fire({
-            //     title: "Login Gagal!",
-            //     text: "Email atau password salah, silahkan coba lagi!",
-            //     icon: "error",
-            // });
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
 
-            toast.error("Gagal, silahkan coba lagi!");
-
-            console.log(e.response.data.errors);
-
-            setErrors(e.response.data.errors);
+            setErrors(errorData.errors);
         } finally {
             setIsLoading(false);
         }

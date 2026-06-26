@@ -23,7 +23,14 @@ export default function Note() {
             const response = await api.get("/api/transaction/");
             setTransactions(response.data.data);
         } catch (e) {
-            console.log(e);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         } finally {
             setLoading(false);
         }
@@ -34,7 +41,8 @@ export default function Note() {
     }, []);
 
     const display = transactions.filter((item) => {
-        return item.notes.toLowerCase().includes(searchQuery.toLowerCase());
+        const notes = item.notes ? item.notes.toLowerCase() : "";
+        return notes.includes(searchQuery.toLowerCase());
     });
     // const display = transactions;
 

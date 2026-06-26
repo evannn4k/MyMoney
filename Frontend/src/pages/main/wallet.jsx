@@ -8,7 +8,6 @@ import {
     AlertDialogHeader,
     AlertDialogMedia,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
     Dialog,
@@ -18,7 +17,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -32,7 +30,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faMagnifyingGlass,
     faPlus,
-    faPenToSquare,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
@@ -42,6 +39,7 @@ import api from "@/services/api";
 import { Spinner } from "@/components/ui/spinner";
 import Swal from "sweetalert2";
 import CardWallet from "@/components/wallet/card-wallet";
+import { toast } from "sonner";
 
 export default function Wallet() {
     const [wallets, setWallets] = useState([]);
@@ -51,13 +49,13 @@ export default function Wallet() {
     const [openDelete, setOpenDelete] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [id, setId] = useState(0);
-    const [errors, setErrors] = useState({});
 
     const initialWallet = {
         name: "",
         saldo: null,
     };
 
+    const [errors, setErrors] = useState(initialWallet);
     const [wallet, setWallet] = useState(initialWallet);
 
     const fetchWallet = async () => {
@@ -66,7 +64,14 @@ export default function Wallet() {
             const response = await api.get("/api/wallet");
             setWallets(response.data.data);
         } catch (e) {
-            console.log(e.response.data);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         } finally {
             setIsLoading(false);
         }
@@ -113,8 +118,14 @@ export default function Wallet() {
             setWallet(initialWallet);
             fetchWallet();
         } catch (e) {
-            console.log(e.response.data);
-            setErrors(e.response.data.errors);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         } finally {
             setIsWaiting(false);
         }
@@ -130,7 +141,14 @@ export default function Wallet() {
             });
             fetchWallet();
         } catch (e) {
-            console.log(e.response.data);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         }
     };
 

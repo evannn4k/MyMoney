@@ -53,7 +53,14 @@ export default function TableCategory({
             });
             fetchCategory();
         } catch (e) {
-            console.log(e);
+            const errorData = e.response.data;
+            if (typeof errorData.errors === "object") {
+                toast.error("Gagal, silahkan coba lagi!");
+            } else {
+                toast.error(errorData.errors);
+            }
+
+            setErrors(errorData.errors);
         } finally {
             setAlert({ open: false, id: null });
         }
@@ -114,12 +121,9 @@ export default function TableCategory({
                                         <TableCell className="font-medium text-center">
                                             {i + 1}.
                                         </TableCell>
+                                        <TableCell>{category.name}</TableCell>
                                         <TableCell>
-                                            {category.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {category.type ==
-                                            "income" ? (
+                                            {category.type == "income" ? (
                                                 <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
                                                     Pendapatan
                                                 </Badge>
